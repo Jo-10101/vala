@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>My Valentine 💖</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;500&display=swap" rel="stylesheet">
+
+<style>
+
+/* Reset */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Poppins",sans-serif;
+}
+
+/* Background */
+body{
+    height:100vh;
+    background:
+    linear-gradient(135deg,#f5e9ff,#fff7e6,#e6f7ff);
+    background-size:300% 300%;
+    animation:bgMove 12s ease infinite;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+}
+
+/* Animated Gradient */
+@keyframes bgMove{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+/* Card */
+.container{
+    background:rgba(255,255,255,0.88);
+    backdrop-filter:blur(12px);
+
+    padding:45px 35px;
+    border-radius:30px;
+
+    box-shadow:
+    0 25px 50px rgba(0,0,0,0.18);
+
+    max-width:360px;
+    width:90%;
+    text-align:center;
+}
+
+/* Title */
+h1{
+    font-family:"Playfair Display",serif;
+    font-size:28px;
+    color:#3a2c60;
+    margin-bottom:12px;
+}
+
+/* Text */
+p{
+    color:#555;
+    margin-bottom:28px;
+    font-size:15px;
+}
+
+/* Buttons Area */
+.buttons{
+    position:relative;
+    height:130px;
+}
+
+/* Buttons */
+button{
+    padding:13px 32px;
+    border:none;
+    border-radius:35px;
+    font-size:16px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+/* Yes */
+#yesBtn{
+    background:linear-gradient(135deg,#6a5acd,#b39ddb);
+    color:white;
+    box-shadow:0 8px 18px rgba(0,0,0,0.25);
+}
+
+#yesBtn:hover{
+    transform:scale(1.06);
+}
+
+/* No */
+#noBtn{
+    background:#eee;
+    color:#444;
+    position:absolute;
+}
+
+/* Result */
+#result{
+    display:none;
+}
+
+/* Photos */
+.photos{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin:25px 0;
+}
+
+.photos img{
+    width:130px;
+    height:170px;
+    object-fit:cover;
+    border-radius:18px;
+
+    box-shadow:0 10px 20px rgba(0,0,0,0.25);
+}
+
+/* Popup */
+#popup{
+    position:fixed;
+    top:50%;
+    left:50%;
+
+    transform:
+    translate(-50%,-50%) scale(0);
+
+    background:white;
+    padding:28px 35px;
+
+    border-radius:22px;
+
+    box-shadow:
+    0 20px 40px rgba(0,0,0,0.3);
+
+    text-align:center;
+    transition:0.4s;
+    z-index:10;
+}
+
+#popup.show{
+    transform:
+    translate(-50%,-50%) scale(1);
+}
+
+#popup h3{
+    color:#6a5acd;
+    margin-bottom:8px;
+}
+
+/* Hearts */
+.heart{
+    position:absolute;
+    font-size:22px;
+    animation:floatUp 5s linear infinite;
+}
+
+@keyframes floatUp{
+    from{
+        transform:translateY(0);
+        opacity:1;
+    }
+    to{
+        transform:translateY(-110vh);
+        opacity:0;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+
+<!-- 🎵 Background Music -->
+<audio id="bgMusic" loop>
+    <source src="perfect.mp3" type="audio/mpeg">
+</audio>
+
+
+<!-- First Screen -->
+<div class="container" id="main">
+
+    <h1>Will You Be My Valentine? 💫</h1>
+
+    <p>
+        I have a very special question for you…
+    </p>
+
+    <div class="buttons">
+
+        <button id="yesBtn">Yes 😁</button>
+
+        <button id="noBtn">No 👨🏼‍🦯‍➡️</button>
+
+    </div>
+
+</div>
+
+
+<!-- Second Screen -->
+<div class="container" id="result">
+
+    <h1>You Are My Forever 💍</h1>
+
+    <div class="photos">
+
+        <img src="photo1.jpg">
+        <img src="photo2.jpg">
+
+    </div>
+
+    <p>
+        “With you, every moment feels like magic.” ✨
+    </p>
+
+</div>
+
+
+<!-- Popup -->
+<div id="popup">
+
+    <h3>Got You 😍</h3>
+
+    <p>You’stuck with me forever</p>
+
+</div>
+
+
+
+<script>
+
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+
+const main = document.getElementById("main");
+const result = document.getElementById("result");
+
+const popup = document.getElementById("popup");
+const music = document.getElementById("bgMusic");
+
+
+/* Floating No Button */
+let x = 50;
+let y = 40;
+
+let dx = 1.1;
+let dy = 0.9;
+
+
+/* Move No Smoothly */
+function floatNo(){
+
+    const maxX = window.innerWidth - 150;
+    const maxY = window.innerHeight - 140;
+
+    x += dx;
+    y += dy;
+
+    if(x <= 0 || x >= maxX){
+        dx = -dx;
+    }
+
+    if(y <= 0 || y >= maxY){
+        dy = -dy;
+    }
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top  = y + "px";
+
+    noBtn.style.transform =
+    `rotate(${Math.sin(Date.now()/400)*6}deg)`;
+
+}
+
+
+/* Start Floating */
+setInterval(floatNo,20);
+
+
+/* Speed Up if She Tries */
+noBtn.addEventListener("touchstart",()=>{
+    dx *= 1.2;
+    dy *= 1.2;
+});
+
+noBtn.addEventListener("mouseenter",()=>{
+    dx *= 1.2;
+    dy *= 1.2;
+});
+
+
+/* Yes Click */
+yesBtn.addEventListener("click",()=>{
+
+    main.style.display="none";
+    result.style.display="block";
+
+    music.play();
+
+    showPopup();
+    startHearts();
+
+});
+
+
+/* Popup */
+function showPopup(){
+
+    popup.classList.add("show");
+
+    setTimeout(()=>{
+        popup.classList.remove("show");
+    },3000);
+
+}
+
+
+/* Hearts */
+function startHearts(){
+
+    setInterval(()=>{
+
+        const heart = document.createElement("div");
+        heart.className="heart";
+        heart.innerHTML="💙";
+
+        heart.style.left =
+        Math.random()*100+"vw";
+
+        heart.style.bottom="0";
+
+        document.body.appendChild(heart);
+
+        setTimeout(()=>{
+            heart.remove();
+        },5000);
+
+    },350);
+
+}
+
+</script>
+
+</body>
+</html>
